@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: order-service-prod
+  namespace: openshift-gitops
+spec:
+  destination:
+    namespace: prod-namespace
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: manifests
+    repoURL: https://github.com/your-org/intelligent-canary-demo.git
+    targetRevision: HEAD
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: intelligent-reasoning-gate
+spec:
+  args:
+    - name: service-name
+      value: "order-service"
+  metrics:
+    - name: agent-decision
+      interval: 1m
+      count: 2
+      provider:
+        web:
+          # This is your 'Digital SRE' Agent API
+          url: http://sre-reasoning-agent.apps.cluster.com/evaluate
+          jsonPath: "$.decision" # Expecting "Successful" or "Failed"
+          headers:
+            - name: Content-Type
+              value: application/json
+          body: |
+            {
+              "app": "{{args.service-name}}",
+              "context": "Check for Gray Failures specifically in Cache-DB latency correlation."
+            }

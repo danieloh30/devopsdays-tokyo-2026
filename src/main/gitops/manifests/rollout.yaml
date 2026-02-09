@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: order-service
+spec:
+  replicas: 5
+  strategy:
+    canary:
+      steps:
+        - setWeight: 20
+        - pause: {duration: 2m} # Give the Reasoning Agent time to observe
+        - analysis:
+            templates:
+              - templateName: intelligent-reasoning-gate
+  template:
+    metadata:
+      labels:
+        app: order-service
+    spec:
+      containers:
+        - name: quarkus
+          image: quay.io/demo/order-service:v2
+          ports:
+            - containerPort: 8080

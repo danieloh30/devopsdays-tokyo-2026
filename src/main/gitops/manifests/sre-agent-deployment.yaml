@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sre-reasoning-agent
+  namespace: ops-intelligence
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+        - name: agent
+          image: quay.io/your-repo/sre-agent:latest
+          env:
+            - name: PROMETHEUS_URL
+              value: "http://prometheus-operated.openshift-monitoring.svc:9090"
+            - name: LLM_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: llm-creds
+                  key: api-key
